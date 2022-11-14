@@ -58,27 +58,28 @@ def valida_questao(questao):
             analise['correta'] =  'valor_errado'
     return analise
 
-def valida_questoes(l_questoes):
+def valida_questoes(banco):
     l_resultados = []
-    for i in l_questoes:
+    for i in banco:
         resultado = valida_questao(i)
         l_resultados.append(resultado)
 
     return l_resultados
 
-def sorteia_questao_inedita(l_questoes, nivel,l_repetidas):
+def sorteia_questao_inedita(banco,nivel,questoes_sorteadas):
     i = True
     while i == True:
-        numero = random.randint(0, (len(l_questoes[str(nivel)])-1))
+        if len(banco[nivel]) == 0:
+            print('fudeu.')
+        numero = random.randint(0,(len(banco[nivel])-1))
 
-        questao = l_questoes[str(nivel)][numero]
-        if questao in l_repetidas:
+        questao = banco[nivel][numero]
+        if questao in questoes_sorteadas:
             pass
-        elif questoes == 0:
-            questao = l_questoes['facil'][numero]
         else:
             questoes_sorteadas.append(questao)
-            i = False
+            return questao
+  
         
 
     return questao
@@ -109,12 +110,12 @@ def questao_para_texto(questao,id):
 
 def gera_nivel():
     niveis = ['facil','medio','dificil']
-    if questoes > 4:
-        return niveis[0]
+    if questoes < 4:
+        return str(niveis[0])
     elif questoes < 3 and questoes > 7:
-        return niveis[1]
+        return str(niveis[1])
     elif questoes > 6:
-        return niveis[2]
+        return str(niveis[2])
 
 dicraw = [{'titulo': 'Qual o resultado da operação 57 + 32?',
           'nivel': 'facil',
@@ -288,7 +289,7 @@ while game != False:
     questoes_sorteadas = []
     pular = 3
     ajuda = 2
-    questoes = 0
+    questoes = 1
     erros = 0
     desistiu = 'n'
     print(colored('Olá! Você esta na Fortuna DesSoft e terá a oportunidade de enriquecer!', 'magenta'))
@@ -303,12 +304,12 @@ while game != False:
     
     print('Vamos começar com questões do nível FACIL!')
     input('Aperte ENTER para continuar...')
-    while questoes > 9 and erros <= 0 and desistiu == 'n':
+    while questoes < 10 and erros <= 0 and desistiu == 'n':
         natureza = 'invalida'
         antirepeteco = 'n'
         questaosorteada = sorteia_questao_inedita(banco,gera_nivel(),questoes_sorteadas)
 
-        print(questao_para_texto(questaosorteada))
+        print(questao_para_texto(questaosorteada,questoes))
 
        
         print('\n')
@@ -354,10 +355,10 @@ while game != False:
                         elif resposta == 'ajuda':
                             print(colored('Não deu! Você já pediu ajuda nesta questão!','red'))
                                     
-                        elif resposta == 'pular':
+                        elif resposta == 'pula':
                             if pular > 0:
                                 pular -= 1
-                                if pular > 0:
+                                if pular >= 1:
                                     natureza = 'valida'
                                     print('Ok, pulando! Você ainda tem {} pulos!'.format(pular))
                                 else: 
@@ -368,18 +369,21 @@ while game != False:
                         elif resposta == 'parar':
                             escolha =  str(input('Deseja mesmo parar [S/N]?? Caso responda "S", sairá com R$ {}!'.format(premios[questoes])))
                             if escolha == 'S':
-                                print('Ok! Você parou e seu prêmio é de R$ {}'.format(premios[questoes]))
+                                print('Ok! Você parou e seu prêmio é de R$ {}'.format(premios[questoes-1]))
+                                natureza = 'valida'
+                                desistiu = 's'
                             else:
                                 pass        
                 else:
                     print(colored('Não deu! Você não tem mais direito a ajuda!','red'))              
-            elif resposta == 'pular':
+            elif resposta == 'pula':
                 if pular > 0:
                     pular -= 1
-                    if pular > 0:
+                    if pular >= 1:
                         natureza = 'valida'
                         print('Ok, pulando! Você ainda tem {} pulos!'.format(pular))
                     else: 
+                        natureza = 'valida'
                         print('Ok, pulando! ATENÇÃO: Você não tem mais direito a pulos!')
                     questoes_sorteadas.append(questaosorteada)
                 else:
@@ -387,7 +391,30 @@ while game != False:
             elif resposta == 'parar':
                 escolha =  str(input('Deseja mesmo parar [S/N]?? Caso responda "S", sairá com R$ {}!'.format(premios[questoes])))
                 if escolha == 'S':
-                    print('Ok! Você parou e seu prêmio é de R$ {}'.format(premios[questoes]))
+                    print('Ok! Você parou e seu prêmio é de R$ {}'.format(premios[questoes-1]))
+                    natureza = 'valida'
+                    desistiu = 's'
                 else:
                     pass
-
+    if questoes == 10:
+        
+        print(colored('PARABÉNS, você zerou o jogo e ganhou um milhão de reais!','green'))
+        vontade = str(input('Deseja jogar novamente?[S/N] '))
+        if vontade in ['s','S']:
+            pass
+        elif vontade in ['n','N']:
+            game = False
+    elif erros > 0:
+        print(colored('Que pena! Você errou e vai sair sem nada :(','yellow'))
+        vontade = str(input('Deseja jogar novamente?[S/N] '))
+        if vontade in ['s','S']:
+            pass
+        elif vontade in ['n','N']:
+            game = False
+    elif desistiu == 's':
+        vontade = str(input('Deseja jogar novamente?[S/N] '))
+        if vontade in ['s','S']:
+            pass
+        elif vontade in ['n','N']:
+            game = False
+        
