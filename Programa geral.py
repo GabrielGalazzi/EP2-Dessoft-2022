@@ -2,7 +2,6 @@ import random
 
 from termcolor import colored
 
-
 def transforma_base(dicraw):
     dic = {}
     for i in dicraw:
@@ -304,44 +303,91 @@ while game != False:
     
     print('Vamos começar com questões do nível FACIL!')
     input('Aperte ENTER para continuar...')
-    while questoes > 9 and erros > 0 and desistiu == 'n':
-        
+    while questoes > 9 and erros <= 0 and desistiu == 'n':
+        natureza = 'invalida'
+        antirepeteco = 'n'
         questaosorteada = sorteia_questao_inedita(banco,gera_nivel(),questoes_sorteadas)
 
         print(questao_para_texto(questaosorteada))
 
-        resposta = str(input('Qual sua resposta?! '))
-
+       
         print('\n')
+        while natureza != 'valida':
+            resposta = str(input('Qual sua resposta?! '))
 
-        if resposta not in respostasvalidas:
-            print(colored('Opção Inválida!', 'red'))
-            print(colored('As opções de resposta são "A", "B", "C", "D", "ajuda", "pula" e "parar"!\n', 'cyan'))
-        elif resposta in letras:
-            if resposta == questaosorteada['correta']:
-                questoes += 1
-                questoes_sorteadas.append(questaosorteada)
-                print(colored('Você acertou! Seu prêmio atual é de R$ {}'.format(premios[questoes]), 'cyan'))                                
-                input('Aperte ENTER para continuar...\n\n')
-            else:
-                erros +=1
-        elif resposta == 'ajuda':
-            if ajuda > 0:
-                ajuda -=1
-                print('Ok, lá vem ajuda! Você ainda tem {} ajudas!\n'.format(ajuda))
-                input('Aperte ENTER para continuar...')
-                print(gera_ajuda(questaosorteada))
-                input('Aperte ENTER para continuar...\n\n')
-                print(questao_para_texto(questaosorteada))
-                # copia e cola todo codigo de respostas aqui dentro depois
-            else:
-                print(colored('Não deu! Você não tem mais direito a ajuda!','red'))
-        elif resposta == 'pular':
-            questoes_sorteadas.append(questaosorteada)
-        elif resposta == 'parar':
-            escolha =  str(input('Deseja mesmo parar [S/N]?? Caso responda "S", sairá com R$ {}!'.format(premios[questoes])))
-            if escolha == 'S':
-                print('Ok! Você parou e seu prêmio é de R$ {}'.format(premios[questoes]))
-            else:
-                pass
+            if resposta not in respostasvalidas:
+                print(colored('Opção Inválida!', 'red'))
+                print(colored('As opções de resposta são "A", "B", "C", "D", "ajuda", "pula" e "parar"!\n', 'cyan'))
+            elif resposta in letras:
+                if resposta == questaosorteada['correta']:
+                    questoes += 1
+                    questoes_sorteadas.append(questaosorteada)
+                    print(colored('Você acertou! Seu prêmio atual é de R$ {}'.format(premios[questoes]), 'cyan'))                                
+                    input('Aperte ENTER para continuar...\n\n')
+                else:
+                    erros +=1
+                natureza = 'valida'
+            elif resposta == 'ajuda':
+                if ajuda > 0:
+                    ajuda -=1
+                    antirepeteco = 's'
+                    print('Ok, lá vem ajuda! Você ainda tem {} ajudas!\n'.format(ajuda))
+                    input('Aperte ENTER para continuar...')
+                    print(gera_ajuda(questaosorteada))
+                    input('Aperte ENTER para continuar...\n\n')
+                    print('\n')
+                    while natureza != 'valida':
+                        resposta = str(input('Qual sua resposta?! '))
+
+                        if resposta not in respostasvalidas:
+                            print(colored('Opção Inválida!', 'red'))
+                            print(colored('As opções de resposta são "A", "B", "C", "D", "ajuda", "pula" e "parar"!\n', 'cyan'))
+                        elif resposta in letras:
+                            if resposta == questaosorteada['correta']:
+                                questoes += 1
+                                questoes_sorteadas.append(questaosorteada)
+                                print(colored('Você acertou! Seu prêmio atual é de R$ {}'.format(premios[questoes]), 'cyan'))                                
+                                input('Aperte ENTER para continuar...\n\n')
+                            else:
+                                erros +=1
+                            natureza = 'valida'
+                        elif resposta == 'ajuda':
+                            print(colored('Não deu! Você já pediu ajuda nesta questão!','red'))
+                                    
+                        elif resposta == 'pular':
+                            if pular > 0:
+                                pular -= 1
+                                if pular > 0:
+                                    natureza = 'valida'
+                                    print('Ok, pulando! Você ainda tem {} pulos!'.format(pular))
+                                else: 
+                                    print('Ok, pulando! ATENÇÃO: Você não tem mais direito a pulos!')
+                                questoes_sorteadas.append(questaosorteada)
+                            else:
+                                    print('Não deu! Você não tem mais direito a pulos!')
+                        elif resposta == 'parar':
+                            escolha =  str(input('Deseja mesmo parar [S/N]?? Caso responda "S", sairá com R$ {}!'.format(premios[questoes])))
+                            if escolha == 'S':
+                                print('Ok! Você parou e seu prêmio é de R$ {}'.format(premios[questoes]))
+                            else:
+                                pass        
+                else:
+                    print(colored('Não deu! Você não tem mais direito a ajuda!','red'))              
+            elif resposta == 'pular':
+                if pular > 0:
+                    pular -= 1
+                    if pular > 0:
+                        natureza = 'valida'
+                        print('Ok, pulando! Você ainda tem {} pulos!'.format(pular))
+                    else: 
+                        print('Ok, pulando! ATENÇÃO: Você não tem mais direito a pulos!')
+                    questoes_sorteadas.append(questaosorteada)
+                else:
+                        print('Não deu! Você não tem mais direito a pulos!')
+            elif resposta == 'parar':
+                escolha =  str(input('Deseja mesmo parar [S/N]?? Caso responda "S", sairá com R$ {}!'.format(premios[questoes])))
+                if escolha == 'S':
+                    print('Ok! Você parou e seu prêmio é de R$ {}'.format(premios[questoes]))
+                else:
+                    pass
 
