@@ -108,12 +108,14 @@ def questao_para_texto(questao,id):
     saida = '----------------------------------------\nQUESTAO {0}\n\n{1}\n\nRESPOSTAS:\nA: {2}\nB: {3}\nC: {4}\nD: {5}\n'.format(id,questao['titulo'],questao['opcoes']['A'],questao['opcoes']['B'],questao['opcoes']['C'],questao['opcoes']['D'])
     return saida
 
-def sorteia_nivel():
+def gera_nivel():
     niveis = ['facil','medio','dificil']
-    numero = random.randint(0,2)
-    if questoes == 0:
+    if questoes > 4:
         return niveis[0]
-    return niveis[numero]
+    elif questoes < 3 and questoes > 7:
+        return niveis[1]
+    elif questoes > 6:
+        return niveis[2]
 
 dicraw = [{'titulo': 'Qual o resultado da operação 57 + 32?',
           'nivel': 'facil',
@@ -304,7 +306,7 @@ while game != False:
     input('Aperte ENTER para continuar...')
     while questoes > 9 and erros > 0 and desistiu == 'n':
         
-        questaosorteada = sorteia_questao_inedita(banco,sorteia_nivel(),questoes_sorteadas)
+        questaosorteada = sorteia_questao_inedita(banco,gera_nivel(),questoes_sorteadas)
 
         print(questao_para_texto(questaosorteada))
 
