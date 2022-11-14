@@ -112,9 +112,13 @@ def gera_nivel():
     niveis = ['facil','medio','dificil']
     if questoes < 4:
         return str(niveis[0])
-    elif questoes < 3 and questoes > 7:
+    elif questoes >= 4 and questoes > 7:
+        if questoes == 4:
+            print(colored('HEY! Você passou para o nível MEDIO!','green' ))
         return str(niveis[1])
-    elif questoes > 6:
+    elif questoes >= 7:
+        if questoes == 7 :  
+            print(colored('HEY! Você passou para o nível DIFICIL!','green' ))
         return str(niveis[2])
 
 dicraw = [{'titulo': 'Qual o resultado da operação 57 + 32?',
